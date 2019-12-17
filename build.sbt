@@ -17,7 +17,7 @@ libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-circe"        % http4sVersion,
   "io.circe"   %% "circe-core"          % circeVersion,
   "io.circe"   %% "circe-generic"       % circeVersion,
-  "io.circe"   %% "circe-literal"       % circeVersion % "test",
+  "io.circe"   %% "circe-parser"        % circeVersion,
   "dev.zio"    %% "zio"                 % "1.0.0-RC17",
   "dev.zio"    %% "zio-interop-cats"    % "2.0.0.0-RC10"
 )

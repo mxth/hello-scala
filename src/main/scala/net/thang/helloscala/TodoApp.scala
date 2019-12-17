@@ -1,6 +1,7 @@
 package net.thang.helloscala
 
 import net.thang.helloscala.repository.TodoRepository
+import org.http4s.implicits._
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.server.middleware.CORS
 import zio._
@@ -17,7 +18,7 @@ object TodoApp extends App {
     .flatMap { implicit rts =>
       BlazeServerBuilder[TodoTask]
         .bindHttp(8080, "0.0.0.0")
-        .withHttpApp(CORS(TodoApi().route))
+        .withHttpApp(CORS(TodoApi().route.orNotFound))
         .serve
         .compile
         .drain
