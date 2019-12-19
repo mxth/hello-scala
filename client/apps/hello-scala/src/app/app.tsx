@@ -4,9 +4,26 @@ import './app.scss';
 
 const socket = new WebSocket('ws://localhost:8080/ws');
 
+class Message {
+  constructor(private readonly _tag: string) {
+  }
+  toString() {
+    const { _tag, ...rest } = this;
+    return JSON.stringify({
+      [_tag]: rest
+    })
+  }
+}
+
+class ChatReceived extends Message {
+  constructor(public message: string) {
+    super('ChatReceived')
+  }
+}
+
 // Connection opened
 socket.addEventListener('open', function (event) {
-  socket.send('Hello Server!');
+  socket.send(new ChatReceived('hello').toString());
 });
 
 // Listen for messages

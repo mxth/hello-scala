@@ -2,6 +2,8 @@ package net.thang.helloscala
 
 import io.circe.generic.auto._
 import io.circe._
+import io.circe.parser.decode
+import io.circe.syntax._
 import net.thang.helloscala.repository._
 import org.http4s._
 import org.http4s.circe._
@@ -14,8 +16,6 @@ import zio.interop.catz._
 import fs2._
 import zio.clock.Clock
 import scala.concurrent.duration._
-
-final case class MessageReceived(content: String)
 
 final case class TodoApi[R <: TodoRepository with Clock]() {
   type TodoTask[A] = RIO[R, A]
@@ -50,8 +50,11 @@ final case class TodoApi[R <: TodoRepository with Clock]() {
             Stream.awakeEvery[TodoTask](1.seconds).map(d => Text(s"Ping! $d"))
 
           val fromClient: Pipe[TodoTask, WebSocketFrame, Unit] = _.evalMap {
-            case Text(t, _) => RIO.succeed(println(t))
-            case f          => RIO.succeed(println(s"Unknown type: $f"))
+            case Text(t, _) =>
+              RIO
+                .fromEither(decode[TodoMessage](t))
+                .fold(e => println(e), data => println(data))
+            case f => RIO.succeed(println(s"Unknown type: $f"))
           }
 
           WebSocketBuilder[TodoTask].build(toClient, fromClient)
