@@ -9,10 +9,7 @@ class Command {
   }
 
   toString() {
-    const { _tag, ...rest } = this;
-    return JSON.stringify({
-      [_tag]: rest
-    })
+    return JSON.stringify(this)
   }
 }
 
