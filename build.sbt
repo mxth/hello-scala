@@ -24,4 +24,34 @@ libraryDependencies ++= Seq(
   "dev.zio"    %% "zio-interop-cats"     % "2.0.0.0-RC10"
 )
 
-scalacOptions ++= Seq("-Ypartial-unification")
+scalacOptions ++= Seq(
+  "-deprecation",
+  "-encoding",
+  "UTF-8",
+  "-feature",
+  "-unchecked",
+  "-language:existentials",
+  "-language:higherKinds",
+  "-language:implicitConversions",
+  "-Xfuture",
+  "-Ypartial-unification",
+  "-Ywarn-dead-code",
+  "-Ywarn-macros:after",
+  "-Ywarn-value-discard",
+  "-Ywarn-unused",
+)
+
+addCommandAlias(
+  "fmt",
+  ";scalafmtSbt;scalafmt;test:scalafmt"
+)
+
+addCommandAlias(
+  "wip",
+  ";fmt;test:compile"
+)
+
+addCommandAlias(
+  "check",
+  ";scalafmtCheck;test:scalafmtCheck;scalafmtSbtCheck"
+)
