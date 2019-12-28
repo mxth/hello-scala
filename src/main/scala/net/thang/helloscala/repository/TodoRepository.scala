@@ -19,7 +19,7 @@ object TodoRepository {
     def delete(id: TodoId): ZIO[R, Nothing, Unit]
   }
 
-  def mkInMemRepository: ZIO[Any, Nothing, TodoRepositoryInMem] =
+  def mkInMemRepository: ZIO[Any, Nothing, TodoRepository] =
     for {
       ref     <- Ref.make(Map.empty[TodoId, Todo])
       counter <- Ref.make(0L)

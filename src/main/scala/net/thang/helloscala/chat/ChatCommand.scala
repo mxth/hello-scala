@@ -1,12 +1,12 @@
-package net.thang.helloscala
+package net.thang.helloscala.chat
 
 import io.circe.{Decoder, Encoder}
 
-sealed trait TodoMessage
+sealed trait ChatCommand
 
-case class ChatReceived(message: String) extends TodoMessage
+case class SendChatMessage(message: ChatMessage) extends ChatCommand
 
-object TodoMessage {
+object ChatCommand {
   import io.circe.shapes
   import shapeless.{Coproduct, Generic}
 
@@ -22,7 +22,7 @@ object TodoMessage {
       decodeRepr: Decoder[Repr]
   ): Decoder[A] = decodeRepr.map(gen.from)
 
-  def handleMessage(message: TodoMessage) = message match {
-    case ChatReceived(msg) =>
+  def handle(command: ChatCommand): ChatTask[Unit] = command match {
+    case SendChatMessage(message) => ChatEvent.publish(ChatMessageSent(message))
   }
 }

@@ -4,9 +4,10 @@ import './app.scss';
 
 const socket = new WebSocket('ws://localhost:8080/ws');
 
-class Message {
+class Command {
   constructor(private readonly _tag: string) {
   }
+
   toString() {
     const { _tag, ...rest } = this;
     return JSON.stringify({
@@ -15,21 +16,33 @@ class Message {
   }
 }
 
-class ChatReceived extends Message {
-  constructor(public message: string) {
-    super('ChatReceived')
+interface UserID {
+  value: string
+}
+const UserID = (value: string): UserID => ({ value })
+
+interface ChatMessage {
+  userID: UserID
+  content: string
+}
+
+class SendChatMessage extends Command {
+  constructor(public message: ChatMessage) {
+    super('SendChatMessage')
   }
 }
 
-// Connection opened
-socket.addEventListener('open', function (event) {
-  socket.send(new ChatReceived('hello').toString());
-});
 
 // Listen for messages
 socket.addEventListener('message', function (event) {
   console.log('Message from server ', event.data);
 });
+
+// Connection opened
+socket.addEventListener('open', function (event) {
+  socket.send(new SendChatMessage({ userID: UserID('thang'), content: 'hello' }).toString());
+});
+
 
 export const App = () => {
   /*
