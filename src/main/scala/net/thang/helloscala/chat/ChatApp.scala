@@ -18,7 +18,7 @@ object ChatApp extends CatsApp {
             .flatMap { implicit rts =>
               BlazeServerBuilder[ChatTask]
                 .bindHttp(8080, "0.0.0.0")
-                .withHttpApp(CORS(ChatApi.route(topic).orNotFound))
+                .withHttpApp(CORS(ChatApi.routes(topic).orNotFound))
                 .serve
                 .compile
                 .drain

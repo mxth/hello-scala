@@ -9,17 +9,19 @@ import org.http4s.websocket.WebSocketFrame
 import org.http4s.websocket.WebSocketFrame._
 import zio.RIO
 import zio.interop.catz._
-
 import io.circe.generic.extras.auto._
-import io.circe.parser.decode, io.circe.syntax._
+import io.circe.parser.decode
+import io.circe.syntax._
+import cats.syntax.semigroupk._
 
 object ChatApi {
   val dsl: Http4sDsl[ChatTask] = Http4sDsl[ChatTask]
   import dsl._
 
-  def route(eventsTopic: Topic[ChatTask, ChatEvent]): HttpRoutes[ChatTask] =
+  def routes(eventsTopic: Topic[ChatTask, ChatEvent]): HttpRoutes[ChatTask] =
     HttpRoutes
       .of[ChatTask] {
+        case GET -> Root / "token" => Ok(AuthApi.generateToken)
         case GET -> Root / "ws" =>
           val toClient: Stream[ChatTask, WebSocketFrame] = eventsTopic
             .subscribe(10)
@@ -38,5 +40,5 @@ object ChatApi {
           }
 
           WebSocketBuilder[ChatTask].build(toClient, fromClient)
-      }
+      } <+> AuthApi.service
 }

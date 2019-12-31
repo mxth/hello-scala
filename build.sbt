@@ -11,17 +11,18 @@ val circeVersion  = "0.12.2"
 resolvers += Resolver.sonatypeRepo("snapshots")
 
 libraryDependencies ++= Seq(
-  "org.http4s" %% "http4s-dsl"           % http4sVersion,
-  "org.http4s" %% "http4s-blaze-server"  % http4sVersion,
-  "org.http4s" %% "http4s-blaze-client"  % http4sVersion,
-  "org.http4s" %% "http4s-circe"         % http4sVersion,
-  "io.circe"   %% "circe-core"           % circeVersion,
-  "io.circe"   %% "circe-generic"        % circeVersion,
-  "io.circe"   %% "circe-parser"         % circeVersion,
-  "io.circe"   %% "circe-shapes"         % circeVersion,
-  "io.circe"   %% "circe-generic-extras" % circeVersion,
-  "dev.zio"    %% "zio"                  % "1.0.0-RC17",
-  "dev.zio"    %% "zio-interop-cats"     % "2.0.0.0-RC10"
+  "org.http4s"    %% "http4s-dsl"           % http4sVersion,
+  "org.http4s"    %% "http4s-blaze-server"  % http4sVersion,
+  "org.http4s"    %% "http4s-blaze-client"  % http4sVersion,
+  "org.http4s"    %% "http4s-circe"         % http4sVersion,
+  "io.circe"      %% "circe-core"           % circeVersion,
+  "io.circe"      %% "circe-generic"        % circeVersion,
+  "io.circe"      %% "circe-parser"         % circeVersion,
+  "io.circe"      %% "circe-shapes"         % circeVersion,
+  "io.circe"      %% "circe-generic-extras" % circeVersion,
+  "dev.zio"       %% "zio"                  % "1.0.0-RC17",
+  "dev.zio"       %% "zio-interop-cats"     % "2.0.0.0-RC10",
+  "com.pauldijou" %% "jwt-core"             % "4.2.0"
 )
 
 scalacOptions ++= Seq(

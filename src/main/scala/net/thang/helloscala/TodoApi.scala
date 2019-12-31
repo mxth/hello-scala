@@ -3,7 +3,6 @@ package net.thang.helloscala
 import io.circe.generic.auto._
 import io.circe._
 import io.circe.parser.decode
-import io.circe.syntax._
 import net.thang.helloscala.repository._
 import org.http4s._
 import org.http4s.circe._

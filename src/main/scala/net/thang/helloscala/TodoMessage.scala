@@ -7,7 +7,6 @@ sealed trait TodoMessage
 case class ChatReceived(message: String) extends TodoMessage
 
 object TodoMessage {
-  import io.circe.shapes
   import shapeless.{Coproduct, Generic}
 
   implicit def encodeAdtNoDiscr[A, Repr <: Coproduct](
