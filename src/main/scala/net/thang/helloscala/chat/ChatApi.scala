@@ -18,27 +18,33 @@ object ChatApi {
   val dsl: Http4sDsl[ChatTask] = Http4sDsl[ChatTask]
   import dsl._
 
+  def websocket(eventsTopic: Topic[ChatTask, ChatEvent]): AuthedRoutes[AuthUser, ChatTask] =
+    AuthedRoutes.of {
+      case GET -> Root / "ws" as user =>
+        val toClient: Stream[ChatTask, WebSocketFrame] = eventsTopic
+          .subscribe(10)
+          .map(event => Text(event.asJson.noSpaces))
+
+        val fromClient: Pipe[ChatTask, WebSocketFrame, Unit] = _.evalMap {
+          case Text(t, _) =>
+            RIO
+              .fromEither(decode[ChatCommand](t))
+              .foldM(
+                e => RIO.succeed(println(e)),
+                command =>
+                  command.payload match {
+                    case SendChatMessage(message) => eventsTopic.publish1(ChatMessageSent(message))
+                  }
+              )
+          case f => RIO.succeed(println(s"Unknown type: $f"))
+        }
+
+        WebSocketBuilder[ChatTask].build(toClient, fromClient)
+    } <+> AuthApi.service
+
   def routes(eventsTopic: Topic[ChatTask, ChatEvent]): HttpRoutes[ChatTask] =
     HttpRoutes
       .of[ChatTask] {
         case GET -> Root / "token" => Ok(AuthApi.generateToken)
-        case GET -> Root / "ws" =>
-          val toClient: Stream[ChatTask, WebSocketFrame] = eventsTopic
-            .subscribe(10)
-            .map(event => Text(event.asJson.noSpaces))
-
-          val fromClient: Pipe[ChatTask, WebSocketFrame, Unit] = _.evalMap {
-            case Text(t, _) =>
-              RIO
-                .fromEither(decode[ChatCommand](t))
-                .foldM(
-                  e => RIO.succeed(println(e)), {
-                    case SendChatMessage(message) => eventsTopic.publish1(ChatMessageSent(message))
-                  }
-                )
-            case f => RIO.succeed(println(s"Unknown type: $f"))
-          }
-
-          WebSocketBuilder[ChatTask].build(toClient, fromClient)
-      } <+> AuthApi.service
+      } <+> AuthApi.middleware(websocket(eventsTopic)) <+> AuthApi.service
 }

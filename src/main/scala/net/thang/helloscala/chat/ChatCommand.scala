@@ -1,9 +1,15 @@
 package net.thang.helloscala.chat
 
-sealed trait ChatCommand
+final case class ChatCommand(
+    userID: UserID,
+    name: String,
+    payload: Payload
+)
 
-case class SendChatMessage(message: ChatMessage) extends ChatCommand
-case class Foo(i: Int)                           extends ChatCommand
-case class Bar(i: Int)                           extends ChatCommand
+sealed trait Payload
+
+case class SendChatMessage(message: String) extends Payload
+case class Foo(i: Int)                      extends Payload
+case class Bar(i: Int)                      extends Payload
 
 object ChatCommand {}

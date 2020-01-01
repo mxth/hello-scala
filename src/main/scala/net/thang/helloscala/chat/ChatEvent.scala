@@ -1,7 +1,13 @@
 package net.thang.helloscala.chat
 
-sealed trait ChatEvent
-case class Initial()                             extends ChatEvent
-case class ChatMessageSent(message: ChatMessage) extends ChatEvent
+final case class ChatEvent(
+    userID: UserID,
+    payload: Payload
+)
+
+sealed trait Payload
+
+case class Initial()                        extends Payload
+case class ChatMessageSent(message: String) extends Payload
 
 object ChatEvent {}
